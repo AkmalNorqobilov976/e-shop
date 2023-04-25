@@ -1,8 +1,11 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UsePipes, ValidationPipe, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { UpdateProductDTO } from './dto/update-product.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editedFileName } from 'src/utilities/file-helper';
 
 @ApiTags('Product')
 @Controller('product')
@@ -11,7 +14,16 @@ export class ProductController {
 
   @Post()
   @UsePipes(new ValidationPipe())
-  async create(@Body() productDTO: CreateProductDTO) {
+  @UseInterceptors(
+    FileInterceptor('image', {
+      storage: diskStorage({
+        destination: './files',
+        filename: editedFileName
+      })
+    })
+  )
+  async create(@Body() productDTO: CreateProductDTO, @UploadedFile() image: Express.Multer.File) {
+    productDTO.image = image.filename;
     return await this.productService.create(productDTO);
   }
 
