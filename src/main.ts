@@ -6,7 +6,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
   .setTitle('Simple E-commerce')
-  .setDescription('This project for learing')
+  .setDescription('This project is for learing')
   .build();
 
   app.setGlobalPrefix('api');
