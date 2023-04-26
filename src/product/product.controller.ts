@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UsePipes, ValidationPipe, UseInterceptors, UploadedFile, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UsePipes, ValidationPipe, UseInterceptors, UploadedFile, UseGuards, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDTO } from './dto/create-product.dto';
 import { UpdateProductDTO } from './dto/update-product.dto';
@@ -7,6 +7,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editedFileName } from 'src/utilities/file-helper';
 import { AuthGuard } from '@nestjs/passport';
+import { QueryProductDTO } from './dto/query-product.dto';
 
 @ApiTags('Product')
 @Controller('product')
@@ -32,8 +33,8 @@ export class ProductController {
   }
 
   @Get()
-  async findAll() {
-    return await this.productService.findAll();
+  async findAll(@Query() query: QueryProductDTO) {
+    return await this.productService.findAll(query);
   }
 
   @Get(':id')
