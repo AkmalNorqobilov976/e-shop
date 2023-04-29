@@ -16,7 +16,11 @@ import { OrderModule } from './order/order.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'files')
     }),
-    MongooseModule.forRoot(process.env.MONGODB_URI),
+    MongooseModule.forRoot(
+      process.env.NODE_ENV === 'test' 
+      ? process.env.MONGODB_URI_TEST 
+      : process.env.MONGODB_URI
+    ),
     SharedModule,
     AuthModule,
     ProductModule,

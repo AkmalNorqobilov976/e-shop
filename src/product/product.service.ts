@@ -3,15 +3,15 @@ import { CreateProductDTO } from './dto/create-product.dto';
 import { UpdateProductDTO } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Product } from 'src/types/product';
+import { Product } from './../types/product';
 import * as fs from 'fs';
 import { QueryProductDTO } from './dto/query-product.dto';
 @Injectable()
 export class ProductService {
-  
+
   constructor(
-    @InjectModel('Product') private productModel: Model<Product> 
-  ) {}
+    @InjectModel('Product') private productModel: Model<Product>
+  ) { }
 
   async create(productDTO: CreateProductDTO, image: Express.Multer.File) {
     productDTO.image = image.filename;
@@ -34,30 +34,27 @@ export class ProductService {
   }
 
   async findOne(id: string) {
-    return await this.productModel.findOne({ _id: id})
+    return await this.productModel.findOne({ _id: id })
       .populate('owner', '-password');
   }
 
   async update(
-    id: string, 
+    id: string,
     productDTO: UpdateProductDTO,
-    image: Express.Multer.File  
+    image: Express.Multer.File
   ) {
     try {
       const product = await this.productModel.findOne({ _id: id });
-    if(image) {
-      await fs.unlink(`${__dirname}/../../files/${product.image}`, async (error) => {
-        if(!error) {
-          throw new HttpException('File could not be found', HttpStatus.NOT_FOUND);
+      if (image) {
+        if(fs.existsSync(`${__dirname}/../../files/${product.image}`)) {
+          fs.unlinkSync(`${__dirname}/../../files/${product.image}`);
         }
-        
         productDTO.image = image.filename;
         return await product.updateOne(productDTO);
-      })
-    }
-    return await product.updateOne(productDTO);
+      }
+      return await product.updateOne(productDTO);
     } catch (error) {
-      
+      throw new HttpException(error.message || 'File could not be found', HttpStatus.BAD_REQUEST);
     }
   }
 
