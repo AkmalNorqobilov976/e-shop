@@ -2,7 +2,7 @@
     "version": 2,
     "env": {
         "MONGO_URI": "mongodb+srv://Akmal:admin@cluster0.wr1lktk.mongodb.net/test",
-        "PORT": 8080
+        "PORT": "8080"
     },
     "builds": [
         {
