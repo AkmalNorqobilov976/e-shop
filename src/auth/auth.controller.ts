@@ -13,10 +13,6 @@ export class AuthController {
     private userService: UserService
   ) {}
 
-  @Get()
-  async hi() {
-    return 'hi friend';
-  }
   @Post('register')
   @UsePipes(new ValidationPipe())
   async register(@Body() userDTO: RegisterDTO) {
